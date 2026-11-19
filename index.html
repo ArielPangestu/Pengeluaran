@@ -9,8 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Tabungan">
 <title>Tabungan Pribadi</title>
-<link rel="icon" type="image/png" href="apple-touch-icon.png?v=2">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=2">
+<link rel="icon" type="image/png" href="apple-touch-icon.png?v=3">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=3">
 <style>
 :root{
   --bg:#F2F2F7;
@@ -29,7 +29,7 @@
   --herofg:#FFFFFF;
   --tab:rgba(255,255,255,0.78);
   --sh:0 4px 20px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.03);
-  --sh-lg:0 16px 40px rgba(15,61,62,0.18);
+  --sh-lg:0 16px 40px rgba(16,37,66,0.2);
   --glass-border:rgba(255,255,255,0.65);
 }
 
@@ -65,7 +65,7 @@ body{
   font:16px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui,sans-serif;
   -webkit-font-smoothing:antialiased;
   background-image:
-    radial-gradient(at 0% 0%, rgba(15,61,62,0.08) 0px, transparent 50%),
+    radial-gradient(at 0% 0%, rgba(16,37,66,0.08) 0px, transparent 50%),
     radial-gradient(at 100% 0%, rgba(232,163,61,0.08) 0px, transparent 50%);
   background-attachment:fixed;
 }
@@ -75,7 +75,7 @@ body{
   position:fixed;inset:0;z-index:99999;
   background:var(--bg);
   background-image:
-    radial-gradient(circle at 20% 20%, rgba(16,110,112,0.18), transparent 45%),
+    radial-gradient(circle at 20% 20%, rgba(24,59,107,0.18), transparent 45%),
     radial-gradient(circle at 80% 80%, rgba(232,163,61,0.18), transparent 45%);
   display:flex;align-items:center;justify-content:center;
   padding:24px;
@@ -110,7 +110,7 @@ body{
   border-radius:22px;
   background:var(--hero-grad);
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 12px 28px rgba(15,61,62,0.28);
+  box-shadow:0 12px 28px rgba(16,37,66,0.28);
 }
 .login-card h1{margin:0;font-size:1.65rem;font-weight:700;letter-spacing:-.03em}
 .login-card p{margin:6px 0 24px;color:var(--mute);font-size:.92rem}
@@ -126,7 +126,7 @@ body{
   box-shadow:0 0 0 4px rgba(0,122,255,0.15);
   outline:none;
 }
-.login-err{color:var(--out);font-size:.85rem;min-height:1.3em;margin:12px 0 0;font-weight:600}
+.login-err{color:var(--out);font-size:.85rem;min-height:1.3em;margin:12px 0 0;font-weight:600;line-height:1.4}
 
 /* === LAYOUT === */
 main{
@@ -139,7 +139,7 @@ main{
   width:46px;height:46px;border-radius:15px;
   background:var(--hero-grad);
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 6px 16px rgba(15,61,62,0.2);
+  box-shadow:0 6px 16px rgba(16,37,66,0.2);
   flex:none;
 }
 .top h1{margin:0;font-size:1.65rem;line-height:1.15;letter-spacing:-.03em;font-weight:700}
@@ -232,7 +232,7 @@ button.main{
   width:100%;min-height:52px;border:0;border-radius:16px;
   background:var(--hero-grad);color:var(--herofg);
   font-family:inherit;font-size:16.5px;font-weight:600;letter-spacing:-.01em;
-  cursor:pointer;box-shadow:0 6px 18px rgba(15,61,62,0.2);
+  cursor:pointer;box-shadow:0 6px 18px rgba(16,37,66,0.2);
   transition:transform .15s cubic-bezier(.2,.8,.2,1), opacity .15s;
 }
 button.main:active{transform:scale(.97);opacity:.92}
@@ -358,7 +358,7 @@ li b{white-space:nowrap;font-weight:650;font-variant-numeric:tabular-nums;font-s
 .tabs button.on{
   background:var(--hero-grad);
   color:var(--herofg);
-  box-shadow:0 4px 12px rgba(15,61,62,0.22);
+  box-shadow:0 4px 12px rgba(16,37,66,0.22);
 }
 .tabs svg{width:20px;height:20px}
 
@@ -465,7 +465,7 @@ details.det[open] summary::after{transform:rotate(-90deg)}
 
 .print-only{display:none}
 @media print {
-  :root{--bg:#fff;--card:#fff;--card-solid:#fff;--ink:#111;--mute:#666;--line:#ddd;--fill:#f0f0f3;--in:#1a9c45;--out:#d92d20;--warn:#d97706;--trf:#0a64d6;--hero-grad:linear-gradient(135deg,#0D3B3E 0%,#165B5E 52%,#1E7A74 100%);--herofg:#fff;--sh:none}
+  :root{--bg:#fff;--card:#fff;--card-solid:#fff;--ink:#111;--mute:#666;--line:#ddd;--fill:#f0f0f3;--in:#1a9c45;--out:#d92d20;--warn:#d97706;--trf:#0a64d6;--hero-grad:linear-gradient(135deg,#102542 0%,#183B6B 52%,#24579C 100%);--herofg:#fff;--sh:none}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;animation:none!important}
   html,body{background:#fff!important;background-image:none!important;color:#111}
   .tabs,.top,#tCatat,#gantiPin,#loginScreen,.export-btns,.sync-btn,.pill,.modal-bg,.hero-btn,.cat-grid,.amt-chips{display:none!important}
@@ -744,6 +744,9 @@ details.det[open] summary::after{transform:rotate(-90deg)}
 </div>
 
 <script>
+// GANTI URL DI BAWAH INI DENGAN WEB APP URL (/exec) DARI APPS SCRIPT TABUNGAN PRIBADI KAMU:
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw2KTuFcYEYx33oNm5u8P1VLLxpWLlgAJLUyh6H5-eWo9oRiof38SkHNEJBWy4X95xi/exec';
+
 const KAT = {
   Pengeluaran: ['Makan & minum','Transportasi','Tagihan & rumah','Belanja harian','Hiburan','Kesehatan','Keluarga & sosial','Lainnya'],
   Pemasukan: ['Gaji','Bonus & THR','Usaha & freelance','Investasi','Lainnya']
@@ -763,10 +766,12 @@ const rpShort = n => {
   if (abs >= 1e3) return sign + Math.round(abs / 1e3) + 'rb';
   return sign + abs;
 };
+
+const STORE_PREFIX = 'tp_v1_';
 const store = {
-  get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
-  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} },
-  del(k){ try { localStorage.removeItem(k); } catch(e){} }
+  get(k, d){ try { const v = localStorage.getItem(STORE_PREFIX + k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(STORE_PREFIX + k, JSON.stringify(v)); } catch(e){} },
+  del(k){ try { localStorage.removeItem(STORE_PREFIX + k); } catch(e){} }
 };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const angka = v => Number(String(v).replace(/\D/g, '')) || 0;
@@ -798,8 +803,8 @@ let pending = store.get('pending', []);
 let config = normalizeConfig(store.get('config', {}));
 const allRows = () => [...rows, ...pending];
 
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWUXBB3Ev_t2cdvymELSOZJHrhQr4dvR2KIwyunomLw5mVMu8iLif4gO7uXyR2yhkf/exec';
-const urlOk = /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(SCRIPT_URL);
+const isPlaceholderUrl = SCRIPT_URL.includes('GANTI_DENGAN_URL');
+const urlOk = !isPlaceholderUrl && /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(SCRIPT_URL);
 let pin = store.get('pin', '');
 let dataVersion = store.get('ver', '');
 let inflight = 0;
@@ -844,6 +849,10 @@ function showMainApp() {
 
 $('loginForm').addEventListener('submit', async e => {
   e.preventDefault();
+  if (!urlOk) {
+    showLoginScreen('SCRIPT_URL di index.html belum diisi dengan URL Web App baru kamu.');
+    return;
+  }
   const inputPin = $('loginPinInput').value.trim();
   if (!inputPin) { showLoginScreen('Masukkan PIN terlebih dahulu.'); return; }
   $('simpanPin').disabled = true;
@@ -866,7 +875,7 @@ $('loginForm').addEventListener('submit', async e => {
       showLoginScreen(j.error && j.error !== 'PIN salah' ? j.error : 'PIN salah! Periksa kembali angka PIN kamu.');
     }
   } catch (err) {
-    showLoginScreen('Gagal terhubung ke server. Periksa koneksi internet.');
+    showLoginScreen('Gagal terhubung ke Apps Script. Pastikan Deploy disetel ke "Anyone" & URL sudah benar.');
   }
   $('simpanPin').disabled = false;
   $('simpanPin').textContent = 'Buka Dompet';
@@ -1525,8 +1534,7 @@ $('btnCsv').onclick = () => {
   const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
   const lines = [['Tanggal','Jenis','Kategori','Nominal','Catatan'].join(',')];
   all.forEach(r => lines.push([r.tanggal, r.jenis, q(r.kategori), r.nominal, q(r.catatan)].join(',')));
-  const blob = new Blob(['﻿' + lines.join('
-')], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = 'Tabungan-Pribadi-' + today() + '.csv'; a.click();
@@ -1554,7 +1562,9 @@ window.addEventListener('offline', () => setLiveStatus(false, 'Offline'));
 
 // === MULAI ===
 renderCatChips();
-if (!pin) {
+if (!urlOk) {
+  showLoginScreen('SCRIPT_URL di index.html belum diisi dengan URL Web App baru kamu.');
+} else if (!pin) {
   showLoginScreen();
 } else {
   muat(pin)
