@@ -798,7 +798,7 @@ let pending = store.get('pending', []);
 let config = normalizeConfig(store.get('config', {}));
 const allRows = () => [...rows, ...pending];
 
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8BmzicoKVNhOb3IRYjurSSisSAnqNVgpoBXR83boZlBpWBrv00qTITuVH_MG3OA7v/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7obfakYlT2UlwNg_ZbmBfD1OYNc6aL09ln2U1seJUiEDnmVeslwPsQXNsYTHdoDeB/exec';
 const urlOk = /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(SCRIPT_URL);
 let pin = store.get('pin', '');
 let dataVersion = store.get('ver', '');
