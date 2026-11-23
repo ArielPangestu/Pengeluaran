@@ -574,6 +574,8 @@ details.det[open] summary::after{transform:rotate(-90deg)}
 
     <div class="cat-grid" id="catGrid"></div>
 
+    <label class="f">Dompet<select id="dompet"></select></label>
+
     <div class="quick-meta">
       <label class="q-chip" title="Ubah tanggal">📅 <span id="tglLabel">Hari ini</span><input type="date" id="tanggal" required></label>
       <button type="button" class="q-chip" id="btnCatatan">+ Catatan</button>
@@ -700,6 +702,7 @@ details.det[open] summary::after{transform:rotate(-90deg)}
     <div class="det-rows">
       <div class="det-row"><span>Jenis</span><b id="detJenis"></b></div>
       <div class="det-row"><span>Tanggal</span><b id="detTanggal"></b></div>
+      <div class="det-row"><span>Dompet</span><b id="detDompet"></b></div>
       <div class="det-row" id="detCatatanRow"><span>Catatan</span><b id="detCatatan"></b></div>
     </div>
     <button type="button" class="main" id="btnBukaEdit">✏️ Ubah Catatan</button>
@@ -724,6 +727,7 @@ details.det[open] summary::after{transform:rotate(-90deg)}
       <label class="f">Nominal<input type="text" id="eNominal" inputmode="numeric" autocomplete="off" required></label>
     </div>
     <label class="f">Kategori<select id="eKategori"></select></label>
+    <label class="f">Dompet<select id="eDompet"></select></label>
     <label class="f">Catatan<input type="text" id="eCatatan" placeholder="Opsional"></label>
     <button type="button" class="main" id="btnSimpanEdit">Simpan Perubahan</button>
   </div>
@@ -785,6 +789,8 @@ const KAT_ICON = {
   'Hiburan':'🎬','Kesehatan':'💊','Keluarga & sosial':'🎁','Lainnya':'🧾',
   'Gaji':'💼','Bonus & THR':'🎉','Usaha & freelance':'🛍️','Investasi':'📈'
 };
+const DOMPET = ['Bank', 'E-wallet', 'Tunai', 'Lainnya'];
+const dompetIcon = d => ({ 'Bank':'🏦', 'E-wallet':'📱', 'Tunai':'💵', 'Lainnya':'👛' })[d] || '👛';
 const katIcon = k => KAT_ICON[k] || '🧾';
 const PALETTE = ['#007AFF','#FF9500','#34C759','#FF3B30','#AF52DE','#5AC8FA','#FFCC00','#8E8E93'];
 const $ = id => document.getElementById(id);
@@ -1080,6 +1086,12 @@ document.querySelectorAll('.amt-chips button').forEach(b => b.onclick = () => {
   $('nominal').value = cur ? 'Rp ' + cur.toLocaleString('id-ID') : '';
 });
 
+function renderDompetSelect(){
+  const last = store.get('lastDompet', 'Bank');
+  $('dompet').innerHTML = DOMPET.map(d => `<option ${d === last ? 'selected' : ''}>${esc(d)}</option>`).join('');
+}
+$('dompet').addEventListener('change', e => store.set('lastDompet', e.target.value));
+
 function updateTglLabel(){
   const v = $('tanggal').value;
   if (v === today()) $('tglLabel').textContent = 'Hari ini';
@@ -1113,7 +1125,7 @@ $('form').addEventListener('submit', e => {
   if (!urlOk) { toast('Alamat Google Sheet belum diisi di kode (SCRIPT_URL).', true); return; }
   if (!pin) { showLoginScreen('Sesi berakhir, masukkan PIN.'); return; }
   const j = jenis();
-  const item = { id: uid(), tanggal: $('tanggal').value || today(), jenis: j, kategori: selKat, nominal: nom, catatan: $('catatan').value.trim(), oleh: 'Saya', patungan: false, dompet: 'Tabungan' };
+  const item = { id: uid(), tanggal: $('tanggal').value || today(), jenis: j, kategori: selKat, nominal: nom, catatan: $('catatan').value.trim(), oleh: 'Saya', patungan: false, dompet: $('dompet').value };
   const lk = store.get('lastKat', {}); lk[j] = selKat; store.set('lastKat', lk);
   $('nominal').value = '';
   $('catatan').value = '';
@@ -1221,7 +1233,7 @@ function filterRiwayat(){
     if (dari && t < dari) return false;
     if (sampai && t > sampai) return false;
     if (hf.kat && r.kategori !== hf.kat) return false;
-    if (q && !`${katLabel(r)} ${r.catatan} ${r.nominal} ${r.tanggal}`.toLowerCase().includes(q)) return false;
+    if (q && !`${katLabel(r)} ${r.catatan} ${r.nominal} ${r.tanggal} ${r.dompet || ''}`.toLowerCase().includes(q)) return false;
     return true;
   });
   if (hf.urut === 'terlama') list.sort((a, b) => String(a.tanggal).localeCompare(String(b.tanggal)));
@@ -1246,9 +1258,9 @@ function renderTxList(){
     const tunda = pending.includes(r) ? ' (menunggu terkirim)' : '';
     const cls = isOut(r) ? 'out' : (isIn(r) ? 'in' : 'trf');
     const sign = isOut(r) ? '−' : (isIn(r) ? '+' : '');
-    return `<li data-idx="${i}"><span class="tx-l"><i class="tx-ico">${rowIcon(r)}</i><span>${esc(katLabel(r))}<small>${esc(r.tanggal)}${r.catatan ? ' · ' + esc(r.catatan) : ''}${tunda}</small></span></span><b class="${cls}">${sign}${rp(r.nominal)}</b></li>`;
+    const dompetLabel = r.dompet && r.dompet !== 'Tabungan' ? ' · ' + dompetIcon(r.dompet) + ' ' + esc(r.dompet) : '';
+    return `<li data-idx="${i}"><span class="tx-l"><i class="tx-ico">${rowIcon(r)}</i><span>${esc(katLabel(r))}<small>${esc(r.tanggal)}${dompetLabel}${r.catatan ? ' · ' + esc(r.catatan) : ''}${tunda}</small></span></span><b class="${cls}">${sign}${rp(r.nominal)}</b></li>`;
   }).join('') : '<li class="empty">Belum ada catatan yang cocok.</li>';
-  $('btnFilterAktif') && 0;
   $('btnToggleFilter').textContent = aktif ? 'Filter •' : 'Filter';
 }
 
@@ -1291,8 +1303,8 @@ $('btnLoadMore').onclick = () => { listLimit += 25; renderTxList(); };
 
 function csvDari(list){
   const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
-  const lines = [['Tanggal','Jenis','Kategori','Nominal','Catatan'].join(',')];
-  list.forEach(r => lines.push([r.tanggal, r.jenis, q(r.kategori), r.nominal, q(r.catatan)].join(',')));
+  const lines = [['Tanggal','Jenis','Kategori','Nominal','Dompet','Catatan'].join(',')];
+  list.forEach(r => lines.push([r.tanggal, r.jenis, q(r.kategori), r.nominal, q(r.dompet || 'Tabungan'), q(r.catatan)].join(',')));
   return new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
 }
 function unduhCsv(blob, nama){
@@ -1327,6 +1339,7 @@ function bukaDetail(tx) {
   $('detTanggal').textContent = new Date(tx.tanggal + 'T00:00:00').toLocaleDateString('id-ID', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   });
+  $('detDompet').textContent = tx.dompet || 'Tabungan';
   if (tx.catatan) {
     $('detCatatanRow').hidden = false;
     $('detCatatan').textContent = tx.catatan;
@@ -1341,6 +1354,10 @@ function bukaFormEdit(tx) {
   $('eTanggal').value = tx.tanggal;
   $('eNominal').value = 'Rp ' + Number(tx.nominal).toLocaleString('id-ID');
   isiKategoriEdit(tx.jenis, tx.kategori);
+  const dOpts = DOMPET.slice();
+  const dAktif = tx.dompet || 'Tabungan';
+  if (!dOpts.includes(dAktif)) dOpts.unshift(dAktif);
+  $('eDompet').innerHTML = dOpts.map(d => `<option ${d === dAktif ? 'selected' : ''}>${esc(d)}</option>`).join('');
   $('eCatatan').value = tx.catatan || '';
   $('editModal').hidden = false;
 }
@@ -1384,7 +1401,7 @@ $('btnSimpanEdit').onclick = () => {
     catatan: $('eCatatan').value.trim(),
     oleh: activeTx.oleh || 'Saya',
     patungan: false,
-    dompet: activeTx.dompet || 'Tabungan'
+    dompet: $('eDompet').value
   };
   if (pending.includes(activeTx)) {
     Object.assign(activeTx, updated);
@@ -1440,7 +1457,7 @@ function tapShortcut(sc){
   if (!pin) { showLoginScreen('Sesi berakhir, masukkan PIN.'); return; }
   scLast[sc.id] = Date.now();
   const label = sc.label && sc.label !== sc.kategori ? sc.label : '';
-  const item = { id: uid(), tanggal: $('tanggal').value || today(), jenis: sc.jenis, kategori: sc.kategori, nominal: Number(sc.nominal), catatan: label, oleh: 'Saya', patungan: false, dompet: 'Tabungan' };
+  const item = { id: uid(), tanggal: $('tanggal').value || today(), jenis: sc.jenis, kategori: sc.kategori, nominal: Number(sc.nominal), catatan: label, oleh: 'Saya', patungan: false, dompet: $('dompet').value };
   $('tanggal').value = today();
   updateTglLabel();
   simpanOptimis(item, '⚡ ' + (sc.label || sc.kategori) + ' ' + rp(sc.nominal) + ' tercatat');
@@ -1669,6 +1686,7 @@ window.addEventListener('offline', () => setLiveStatus(false, 'Offline'));
 // === MULAI ===
 // Isi pilihan kategori filter (dipanggil sekali)
 $('fKat').innerHTML = '<option value="">Semua</option>' + [...new Set([...KAT.Pengeluaran, ...KAT.Pemasukan])].map(k => `<option>${esc(k)}</option>`).join('');
+renderDompetSelect();
 renderCatChips();
 if (!urlOk) {
   showLoginScreen('SCRIPT_URL di index.html belum diisi dengan URL Web App baru kamu.');
