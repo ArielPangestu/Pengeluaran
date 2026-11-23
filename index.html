@@ -899,14 +899,14 @@ async function muat(pinTry, since){
   return await res.json();
 }
 
-function simpanOptimis(item, okMsg){
+function simpanOptimis(item, okMsg, bad){
   rows.push(item);
   store.set('rows', rows);
   inflight++;
   render();
   toast('Menyimpan...');
   kirim({ action: 'add', ...item })
-    .then(() => toast(okMsg))
+    .then(() => toast(okMsg, bad))
     .catch(err => {
       rows = rows.filter(x => x !== item);
       store.set('rows', rows);
@@ -1089,11 +1089,34 @@ $('form').addEventListener('submit', e => {
   $('btnCatatan').classList.remove('on');
   $('tanggal').value = today();
   updateTglLabel();
-  simpanOptimis(item, j === 'Pemasukan' ? 'Tabungan bertambah 🎉' : 'Pengeluaran tercatat.');
+  const peringatan = cekBatasSetelahTambah(item);
+  const okMsg = j === 'Pemasukan' ? 'Tabungan bertambah 🎉' : 'Pengeluaran tercatat.';
+  simpanOptimis(item, peringatan ? peringatan.msg : okMsg, peringatan ? peringatan.bad : false);
 });
 
 // === TAMPILAN UTAMA ===
 const curMonthKey = () => today().slice(0, 7);
+
+// Mengecek apakah transaksi baru membuat kategori melewati 80% atau 100% batas bulanan
+function cekBatasSetelahTambah(item){
+  if (!isOut(item)) return null;
+  const limit = Number((config.budgets || {})[item.kategori]) || 0;
+  if (!limit) return null;
+
+  const mk = curMonthKey();
+  // Dihitung sebelum item baru di-push ke rows
+  const sebelum = sum(allRows().filter(r =>
+    isOut(r) && r.kategori === item.kategori && String(r.tanggal).slice(0, 7) === mk
+  ));
+  const pcSebelum = sebelum / limit * 100;
+  const pcSesudah = (sebelum + Number(item.nominal)) / limit * 100;
+
+  if (pcSesudah >= 100 && pcSebelum < 100)
+    return { msg: `⚠️ ${item.kategori} melewati batas bulanan (${Math.round(pcSesudah)}%)`, bad: true };
+  if (pcSesudah >= 80 && pcSebelum < 80)
+    return { msg: `⚠️ ${item.kategori} sudah ${Math.round(pcSesudah)}% dari batas bulanan`, bad: true };
+  return null;
+}
 
 function render(){
   const all = allRows();
