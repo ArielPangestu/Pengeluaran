@@ -310,7 +310,7 @@ button.pill:active{transform:scale(.94)}
 .sc-chip.out{background:rgba(255,59,48,.14);color:var(--out)}
 .sc-chip.add{background:var(--fill);color:var(--mute);font-weight:600}
 
-.hist-pills{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;scrollbar-width:none}
+.hist-pills{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px;scrollbar-width:none}
 .hist-pills::-webkit-scrollbar{display:none}
 .h-pill{padding:6px 14px;border-radius:99px;border:0;background:var(--fill);color:var(--mute);font-size:.8rem;font-weight:600;white-space:nowrap;cursor:pointer;transition:all .15s}
 .h-pill.on{background:var(--ink);color:var(--bg)}
@@ -396,6 +396,9 @@ li b{white-space:nowrap;font-weight:650;font-variant-numeric:tabular-nums;font-s
 .filter-box .row{gap:8px;margin-top:8px}
 .filter-box input,.filter-box select{background:var(--card-solid);min-height:40px;padding:8px 10px;font-size:16px;margin-top:4px;border-radius:11px}
 .filter-box label.f{margin-bottom:0;font-size:.75rem}
+.filter-box .hist-pills{margin:8px 0 0}
+.ringkas-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:.8rem;color:var(--mute);margin:2px 0 6px;font-variant-numeric:tabular-nums}
+.ringkas-row b{color:var(--ink);font-weight:700}
 
 /* === BOTTOM SHEET === */
 .modal-bg{
@@ -593,24 +596,50 @@ details.det[open] summary::after{transform:rotate(-90deg)}
   <div class="panel">
     <div class="head-row">
       <h2>Riwayat</h2>
-      <button type="button" class="pill" id="btnToggleFilter">Cari</button>
-    </div>
-    <div class="hist-pills" id="histPills">
-      <button type="button" class="h-pill on" data-hp="all">Semua</button>
-      <button type="button" class="h-pill" data-hp="Masuk">Masuk</button>
-      <button type="button" class="h-pill" data-hp="Keluar">Keluar</button>
-      <button type="button" class="h-pill" data-hp="BulanIni">Bulan Ini</button>
-    </div>
-    <div class="filter-box" id="filterBox" hidden>
-      <input type="search" id="fCari" placeholder="Cari catatan atau kategori...">
-      <div class="row">
-        <label class="f">Kategori<select id="fKat"><option value="">Semua</option></select></label>
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:8px;padding-bottom:12px">
-          <small id="fCount"></small>
-          <button type="button" class="pill" id="btnResetFilter" style="background:var(--card-solid)">Reset</button>
-        </div>
+      <div style="display:flex;gap:6px">
+        <button type="button" class="pill" id="btnCsvFilter">CSV</button>
+        <button type="button" class="pill" id="btnToggleFilter">Filter</button>
       </div>
     </div>
+
+    <div class="hist-pills" id="jenisPills">
+      <button type="button" class="h-pill on" data-jenis="all">Semua</button>
+      <button type="button" class="h-pill" data-jenis="Masuk">Masuk</button>
+      <button type="button" class="h-pill" data-jenis="Keluar">Keluar</button>
+    </div>
+
+    <div class="filter-box" id="filterBox" hidden>
+      <input type="search" id="fCari" placeholder="Cari catatan, kategori, atau nominal...">
+
+      <div class="hist-pills" id="periodePills">
+        <button type="button" class="h-pill on" data-periode="all">Semua waktu</button>
+        <button type="button" class="h-pill" data-periode="ini">Bulan ini</button>
+        <button type="button" class="h-pill" data-periode="lalu">Bulan lalu</button>
+        <button type="button" class="h-pill" data-periode="3bln">3 bulan</button>
+        <button type="button" class="h-pill" data-periode="kustom">Kustom</button>
+      </div>
+
+      <div class="row" id="kustomRow" hidden style="margin-top:4px">
+        <label class="f">Dari<input type="date" id="fDari"></label>
+        <label class="f">Sampai<input type="date" id="fSampai"></label>
+      </div>
+
+      <div class="row" style="margin-top:4px">
+        <label class="f">Kategori<select id="fKat"><option value="">Semua</option></select></label>
+        <label class="f">Urutkan<select id="fUrut">
+          <option value="terbaru">Terbaru</option>
+          <option value="terlama">Terlama</option>
+          <option value="nominal">Nominal terbesar</option>
+        </select></label>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px">
+        <small id="fCount"></small>
+        <button type="button" class="pill" id="btnResetFilter" style="background:var(--card-solid)">Reset</button>
+      </div>
+    </div>
+
+    <div class="ringkas-row" id="fRingkas"></div>
     <ul id="list"></ul>
     <button type="button" class="link" id="btnLoadMore" hidden style="color:var(--trf)">Tampilkan lebih banyak</button>
   </div>
@@ -745,7 +774,7 @@ details.det[open] summary::after{transform:rotate(-90deg)}
 
 <script>
 // GANTI URL DI BAWAH INI DENGAN WEB APP URL (/exec) DARI APPS SCRIPT TABUNGAN PRIBADI KAMU:
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxPANHztIzlyxxhXlj13QB0V47XIXBcsLIu86iFWge_tOdaekuxxEk8TbW0gtVdTQ1S/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyD16DD_CZjupa2zmoZK3YivLSDcY02xhYCXjtprg9zWzG895y5Qnv0jqxlbAgz-OBo/exec';
 
 const KAT = {
   Pengeluaran: ['Makan & minum','Transportasi','Tagihan & rumah','Belanja harian','Hiburan','Kesehatan','Keluarga & sosial','Lainnya'],
@@ -776,6 +805,7 @@ const store = {
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const angka = v => Number(String(v).replace(/\D/g, '')) || 0;
 const uid = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'id_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+const ymd = dt => dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
 const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0,10); };
 function formatInputRp(el){
   el.addEventListener('input', e => {
@@ -808,11 +838,13 @@ const urlOk = !isPlaceholderUrl && /^https:\/\/script\.google\.com\/macros\/s\/.
 let pin = store.get('pin', '');
 let dataVersion = store.get('ver', '');
 let inflight = 0;
-let quickHistFilter = 'all';
 let selKat = '';
 let displayedList = [];
 let listLimit = 15;
 let activeTx = null;
+
+// State filter riwayat
+const hf = { jenis: 'all', periode: 'all', dari: '', sampai: '', kat: '', q: '', urut: 'terbaru' };
 
 $('tanggal').value = today();
 $('bulan').textContent = new Date().toLocaleDateString('id-ID', { month:'long', year:'numeric' });
@@ -1168,54 +1200,112 @@ function render(){
   if (!$('tDash').hidden) renderDash();
 }
 
-document.querySelectorAll('.h-pill').forEach(btn => btn.onclick = () => {
-  document.querySelectorAll('.h-pill').forEach(x => x.classList.toggle('on', x === btn));
-  quickHistFilter = btn.dataset.hp;
-  listLimit = 15;
-  renderTxList();
-});
+// === RIWAYAT & FILTER ===
+function rentangPeriode(){
+  const d = new Date(), y = d.getFullYear(), m = d.getMonth();
+  if (hf.periode === 'ini') return { dari: ymd(new Date(y, m, 1)), sampai: ymd(new Date(y, m + 1, 0)) };
+  if (hf.periode === 'lalu') return { dari: ymd(new Date(y, m - 1, 1)), sampai: ymd(new Date(y, m, 0)) };
+  if (hf.periode === '3bln') return { dari: ymd(new Date(y, m - 2, 1)), sampai: ymd(new Date(y, m + 1, 0)) };
+  if (hf.periode === 'kustom') return { dari: hf.dari, sampai: hf.sampai };
+  return { dari: '', sampai: '' };
+}
 
-$('fKat').innerHTML = '<option value="">Semua</option>' + [...new Set([...KAT.Pengeluaran, ...KAT.Pemasukan])].map(k => `<option>${esc(k)}</option>`).join('');
+function filterRiwayat(){
+  const { dari, sampai } = rentangPeriode();
+  const q = hf.q.trim().toLowerCase();
+  // Dibalik dulu supaya transaksi terbaru yang dicatat muncul lebih dulu pada tanggal yang sama
+  let list = allRows().slice().reverse().filter(r => {
+    if (hf.jenis === 'Masuk' && !isIn(r)) return false;
+    if (hf.jenis === 'Keluar' && !isOut(r)) return false;
+    const t = String(r.tanggal);
+    if (dari && t < dari) return false;
+    if (sampai && t > sampai) return false;
+    if (hf.kat && r.kategori !== hf.kat) return false;
+    if (q && !`${katLabel(r)} ${r.catatan} ${r.nominal} ${r.tanggal}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  if (hf.urut === 'terlama') list.sort((a, b) => String(a.tanggal).localeCompare(String(b.tanggal)));
+  else if (hf.urut === 'nominal') list.sort((a, b) => Number(b.nominal) - Number(a.nominal));
+  else list.sort((a, b) => String(b.tanggal).localeCompare(String(a.tanggal)));
+  return list;
+}
 
 function renderTxList(){
-  const q = $('fCari').value.trim().toLowerCase();
-  const fKat = $('fKat').value;
-  const mk = curMonthKey();
-  const isFiltering = !!(q || fKat || quickHistFilter !== 'all');
-  let filtered = allRows().slice().reverse();
-  if (isFiltering) {
-    filtered = filtered.filter(r => {
-      if (quickHistFilter === 'Masuk' && !isIn(r)) return false;
-      if (quickHistFilter === 'Keluar' && !isOut(r)) return false;
-      if (quickHistFilter === 'BulanIni' && String(r.tanggal).slice(0,7) !== mk) return false;
-      if (fKat && r.kategori !== fKat) return false;
-      if (q && !(`${katLabel(r)} ${r.catatan} ${r.nominal}`.toLowerCase().includes(q))) return false;
-      return true;
-    });
-  }
-  $('fCount').textContent = filtered.length + ' catatan';
-  displayedList = isFiltering ? filtered : filtered.slice(0, listLimit);
-  $('btnLoadMore').hidden = isFiltering || filtered.length <= listLimit;
+  const list = filterRiwayat();
+  const tin = sum(list.filter(isIn)), tout = sum(list.filter(isOut));
+  const aktif = hf.jenis !== 'all' || hf.periode !== 'all' || hf.kat || hf.q.trim() || hf.urut !== 'terbaru';
+
+  $('fCount').textContent = list.length + ' catatan';
+  $('fRingkas').innerHTML = list.length
+    ? `<span>Masuk <b class="in">${rp(tin)}</b></span><span>Keluar <b class="out">${rp(tout)}</b></span><span>Selisih <b>${rp(tin - tout)}</b></span>`
+    : '';
+
+  displayedList = list.slice(0, listLimit);
+  $('btnLoadMore').hidden = list.length <= listLimit;
   $('list').innerHTML = displayedList.length ? displayedList.map((r, i) => {
     const tunda = pending.includes(r) ? ' (menunggu terkirim)' : '';
     const cls = isOut(r) ? 'out' : (isIn(r) ? 'in' : 'trf');
     const sign = isOut(r) ? '−' : (isIn(r) ? '+' : '');
     return `<li data-idx="${i}"><span class="tx-l"><i class="tx-ico">${rowIcon(r)}</i><span>${esc(katLabel(r))}<small>${esc(r.tanggal)}${r.catatan ? ' · ' + esc(r.catatan) : ''}${tunda}</small></span></span><b class="${cls}">${sign}${rp(r.nominal)}</b></li>`;
   }).join('') : '<li class="empty">Belum ada catatan yang cocok.</li>';
+  $('btnFilterAktif') && 0;
+  $('btnToggleFilter').textContent = aktif ? 'Filter •' : 'Filter';
 }
+
+function syncFilterUI(){
+  document.querySelectorAll('#jenisPills .h-pill').forEach(x => x.classList.toggle('on', x.dataset.jenis === hf.jenis));
+  document.querySelectorAll('#periodePills .h-pill').forEach(x => x.classList.toggle('on', x.dataset.periode === hf.periode));
+  $('kustomRow').hidden = hf.periode !== 'kustom';
+  $('fUrut').value = hf.urut;
+}
+
+function setHF(key, val){
+  hf[key] = val;
+  listLimit = 15;
+  syncFilterUI();
+  renderTxList();
+}
+
+document.querySelectorAll('#jenisPills .h-pill').forEach(b => b.onclick = () => setHF('jenis', b.dataset.jenis));
+document.querySelectorAll('#periodePills .h-pill').forEach(b => b.onclick = () => setHF('periode', b.dataset.periode));
 $('btnToggleFilter').onclick = () => {
   $('filterBox').hidden = !$('filterBox').hidden;
   if (!$('filterBox').hidden) $('fCari').focus();
 };
-['fCari','fKat'].forEach(id => $(id).addEventListener('input', renderTxList));
+$('fCari').addEventListener('input', e => setHF('q', e.target.value));
+$('fKat').addEventListener('change', e => setHF('kat', e.target.value));
+$('fUrut').addEventListener('change', e => setHF('urut', e.target.value));
+$('fDari').addEventListener('change', e => setHF('dari', e.target.value));
+$('fSampai').addEventListener('change', e => setHF('sampai', e.target.value));
 $('btnResetFilter').onclick = () => {
-  $('fCari').value = ''; $('fKat').value = '';
-  quickHistFilter = 'all';
-  document.querySelectorAll('.h-pill').forEach(x => x.classList.toggle('on', x.dataset.hp === 'all'));
+  Object.assign(hf, { jenis: 'all', periode: 'all', dari: '', sampai: '', kat: '', q: '', urut: 'terbaru' });
+  $('fCari').value = '';
+  $('fKat').value = '';
+  $('fDari').value = '';
+  $('fSampai').value = '';
   listLimit = 15;
+  syncFilterUI();
   renderTxList();
 };
 $('btnLoadMore').onclick = () => { listLimit += 25; renderTxList(); };
+
+function csvDari(list){
+  const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const lines = [['Tanggal','Jenis','Kategori','Nominal','Catatan'].join(',')];
+  list.forEach(r => lines.push([r.tanggal, r.jenis, q(r.kategori), r.nominal, q(r.catatan)].join(',')));
+  return new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+}
+function unduhCsv(blob, nama){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = nama; a.click();
+  URL.revokeObjectURL(url);
+}
+$('btnCsvFilter').onclick = () => {
+  const list = filterRiwayat();
+  if (!list.length) { alert('Tidak ada data yang cocok untuk diunduh.'); return; }
+  unduhCsv(csvDari(list), 'Riwayat-Tabungan-' + today() + '.csv');
+};
 
 // === DETAIL, UBAH & HAPUS ===
 function isiKategoriEdit(jns, selected){
@@ -1554,14 +1644,7 @@ function renderDash(){
 $('btnCsv').onclick = () => {
   const all = allRows();
   if (!all.length) { alert('Belum ada data untuk diunduh.'); return; }
-  const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
-  const lines = [['Tanggal','Jenis','Kategori','Nominal','Catatan'].join(',')];
-  all.forEach(r => lines.push([r.tanggal, r.jenis, q(r.kategori), r.nominal, q(r.catatan)].join(',')));
-  const blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'Tabungan-Pribadi-' + today() + '.csv'; a.click();
-  URL.revokeObjectURL(url);
+  unduhCsv(csvDari(all.slice().reverse()), 'Tabungan-Pribadi-' + today() + '.csv');
 };
 $('btnPdf').onclick = () => {
   $('detDetail').open = true;
@@ -1584,6 +1667,8 @@ window.addEventListener('online', () => syncRealtime(false));
 window.addEventListener('offline', () => setLiveStatus(false, 'Offline'));
 
 // === MULAI ===
+// Isi pilihan kategori filter (dipanggil sekali)
+$('fKat').innerHTML = '<option value="">Semua</option>' + [...new Set([...KAT.Pengeluaran, ...KAT.Pemasukan])].map(k => `<option>${esc(k)}</option>`).join('');
 renderCatChips();
 if (!urlOk) {
   showLoginScreen('SCRIPT_URL di index.html belum diisi dengan URL Web App baru kamu.');
